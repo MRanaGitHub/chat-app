@@ -23,13 +23,22 @@ const userScheema = new Schema(
       type: String,
       required: true,
     },
-    avatar: {
+    gender: {
       type: String,
       required: true,
     },
-    coverImage: {
+    city: {
       type: String,
       required: false,
+    },
+    country: {
+      type: String,
+      required: false,
+    },
+    avatar: {
+      type: String,
+      required: false,
+      default: "",
     },
     password: {
       type: String,
