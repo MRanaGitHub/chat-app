@@ -2,8 +2,7 @@ import { User } from "../models/user.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { ApiError } from "../utils/apiError.js";
-
-export const loginUser = (req, res) => {};
+import { generateAccessAndRefereshTokens } from "../services/auth.services.js";
 
 export const singUpUser = asyncHandler(async (req, res) => {
   const { userName, email, fullName, password, gender, city, country } =
@@ -60,4 +59,50 @@ export const singUpUser = asyncHandler(async (req, res) => {
   );
 });
 
-export const logoutUser = (req, res) => {};
+export const loginUser = asyncHandler(async (req, res) => {
+  const { email, userName, password } = req.body;
+  if ((!userName || !email) && !password) {
+    throw new ApiError(400, "User name or Email and password is required");
+  }
+
+  const user = await User.findOne({
+    $or: [{ userName }, { email }],
+  });
+
+  if (!user) {
+    throw new ApiError(400, "User dose not exist");
+  }
+  const isPasswordValid = await user.isPasswordCorrect(password);
+  if (!isPasswordValid) {
+    throw new ApiError(400, "Incorrect password");
+  }
+
+  const { refreshToken, accessToken } = await generateAccessAndRefereshTokens(
+    user._id
+  );
+
+  const loggedinUser = await User.findById(user._id).select(
+    "-password -refereshToken"
+  );
+  const option = { httpOnly: true, secure: true };
+
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, option)
+    .cookie("refreshToken", refreshToken, option) // corrected typo "refereshToken" to "refreshToken"
+    .json(
+      new ApiResponse(
+        200,
+        {
+          user: loggedinUser,
+          accessToken,
+          refreshToken, // corrected typo "refereshToken" to "refreshToken"
+        },
+        "User logged In Successfully"
+      )
+    );
+});
+
+export const logoutUser = asyncHandler(async (req, res) => {
+  return res.json(new ApiResponse(200, {}, "User Logged out Successfully"));
+});
