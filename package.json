@@ -1,7 +1,7 @@
 {
   "name": "chat-app",
   "version": "1.0.0",
-  "description": "",
+  "description": "Chat application",
   "main": "index.js",
   "scripts": {
     "server": "nodemon -r dotenv/config --experimental-json-modules backend/index.js"
