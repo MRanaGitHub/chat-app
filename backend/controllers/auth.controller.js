@@ -1,27 +1,31 @@
-import { User } from "../models/user.model.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
-import { ApiResponse } from "../utils/apiResponse.js";
-import { ApiError } from "../utils/apiError.js";
-import { generateAccessAndRefereshTokens } from "../services/auth.services.js";
+import {User} from "../models/user.model.js";
+import {asyncHandler} from "../utils/asyncHandler.js";
+import {ApiResponse} from "../utils/apiResponse.js";
+import {ApiError} from "../utils/apiError.js";
+import {generateAccessAndRefereshTokens} from "../services/auth.services.js";
 
 export const singUpUser = asyncHandler(async (req, res) => {
-  const { userName, email, fullName, password, gender, city, country } =
+  const {userName, email, fullName, password, gender, city, country} =
     req.body;
-
+  debugger
   if (
     [fullName, email, userName, password, gender].some((field) => {
       field?.trim() === "";
     })
   ) {
-    throw new ApiError(400, "All fields is required");
+    return res
+      .status(400)
+      .json({error: "All fields is required"})
   }
 
   const existingUser = await User.findOne({
-    $or: [{ userName }, { email }],
+    $or: [{userName}, {email}],
   });
 
   if (existingUser) {
-    throw new ApiError(409, "User name or email is already exist");
+    return res
+      .status(409)
+      .json({error: "User name or email is already exist"})
   }
 
   const boyProfilePic = `https://avatar.iran.liara.run/public/boy?username=${userName}`;
@@ -60,13 +64,13 @@ export const singUpUser = asyncHandler(async (req, res) => {
 });
 
 export const loginUser = asyncHandler(async (req, res) => {
-  const { email, userName, password } = req.body;
+  const {email, userName, password} = req.body;
   if ((!userName || !email) && !password) {
     throw new ApiError(400, "User name or Email and password is required");
   }
 
   const user = await User.findOne({
-    $or: [{ userName }, { email }],
+    $or: [{userName}, {email}],
   });
 
   if (!user) {
@@ -77,14 +81,14 @@ export const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Incorrect password");
   }
 
-  const { refreshToken, accessToken } = await generateAccessAndRefereshTokens(
+  const {refreshToken, accessToken} = await generateAccessAndRefereshTokens(
     user._id
   );
 
   const loggedinUser = await User.findById(user._id).select(
     "-password -refereshToken"
   );
-  const option = { httpOnly: true, secure: true };
+  const option = {httpOnly: true, secure: true};
 
   return res
     .status(200)
@@ -111,10 +115,10 @@ export const logoutUser = asyncHandler(async (req, res) => {
         refereshToken: 1,
       },
     },
-    { new: true }
+    {new: true}
   );
 
-  const option = { httpOnly: true, secure: true };
+  const option = {httpOnly: true, secure: true};
 
   return res
     .clearCookie("accessToken", option)
