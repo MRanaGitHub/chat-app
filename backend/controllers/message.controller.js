@@ -1,14 +1,14 @@
-import { Conversation } from "../models/conversation.model.js";
-import { Message } from "../models/message.model.js";
-import { ApiResponse } from "../utils/apiResponse.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
+import {Conversation} from "../models/conversation.model.js";
+import {Message} from "../models/message.model.js";
+import {ApiResponse} from "../utils/apiResponse.js";
+import {asyncHandler} from "../utils/asyncHandler.js";
 
 export const getUserMessages = asyncHandler(async (req, res) => {
-  const { id: userToChatId } = req.params;
+  const {id: userToChatId} = req.params;
   const senderId = req.user._id;
 
   let conversation = await Conversation.findOne({
-    participants: { $all: [senderId, userToChatId] },
+    participants: {$all: [senderId, userToChatId]},
   }).populate("messages");
 
   const messages = conversation ? conversation.messages : [];
@@ -17,12 +17,12 @@ export const getUserMessages = asyncHandler(async (req, res) => {
 });
 
 export const sendMessage = asyncHandler(async (req, res) => {
-  const { id: recieverId } = req.params;
-  const { message } = req.body;
+  const {id: recieverId} = req.params;
+  const {message} = req.body;
   const senderId = req.user._id;
 
   let conversation = await Conversation.findOne({
-    participants: { $all: [senderId, recieverId] },
+    participants: {$all: [senderId, recieverId]},
   });
 
   if (!conversation) {
@@ -48,5 +48,5 @@ export const sendMessage = asyncHandler(async (req, res) => {
   //   const createdConversation = await conversation.save();
   //   const createdMessage = await newMessage.save();
 
-  return res.json(new ApiResponse(200, {}, "Send messages successfully"));
+  return res.json(new ApiResponse(200, {message: newMessage}, "Send messages successfully"));
 });

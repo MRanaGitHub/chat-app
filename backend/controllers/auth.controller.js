@@ -7,7 +7,6 @@ import {generateAccessAndRefereshTokens} from "../services/auth.services.js";
 export const singUpUser = asyncHandler(async (req, res) => {
   const {userName, email, fullName, password, gender, city, country} =
     req.body;
-  debugger
   if (
     [fullName, email, userName, password, gender].some((field) => {
       field?.trim() === "";
@@ -65,9 +64,13 @@ export const singUpUser = asyncHandler(async (req, res) => {
 
 export const loginUser = asyncHandler(async (req, res) => {
   const {email, userName, password} = req.body;
-  if ((!userName || !email) && !password) {
-    throw new ApiError(400, "User name or Email and password is required");
+
+  if (!userName && !password) {
+    return res
+      .status(400)
+      .json({error: "User name or password is required"})
   }
+
 
   const user = await User.findOne({
     $or: [{userName}, {email}],

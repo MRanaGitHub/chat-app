@@ -1,6 +1,17 @@
 import {AppRoute} from "../../constant/appRoute.js";
+import {useState} from "react";
+import {useLogin} from "../../hooks/useLogin.js";
 
 const Login = () => {
+  const [userName, setUserName] = useState()
+  const [password, setPassword] = useState()
+
+  const {loading, login} = useLogin()
+
+  const handleLogin = () => {
+    login(userName, password).then();
+  }
+
   return (
     <div className='flex flex-col items-center justify-center min-w-96 mx-auto'>
       <div
@@ -20,6 +31,8 @@ const Login = () => {
               type='text'
               placeholder='Enter username'
               className='w-full input input-bordered h-10 bg-slate-900'
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
             />
           </div>
           <div>
@@ -32,6 +45,8 @@ const Login = () => {
               type='text'
               placeholder='Enter password'
               className='w-full input input-bordered h-10 bg-slate-900'
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <a href={AppRoute.SignUp} className={"text-sm hover:text-blue-600 mt-2 inline-block"}>
@@ -39,7 +54,14 @@ const Login = () => {
           </a>
 
           <div>
-            <button className="btn btn-block btn-sm mt-2 bg-slate-400 hover:bg-slate-500"> Login</button>
+            <button
+              onClick={handleLogin}
+              disabled={loading}
+              className="btn btn-block btn-sm mt-2 bg-slate-400 hover:bg-slate-500">
+              {
+                loading ? <span className={'loading loading-spinner'}> </span> : "Login"
+              }
+            </button>
           </div>
         </form>
       </div>
