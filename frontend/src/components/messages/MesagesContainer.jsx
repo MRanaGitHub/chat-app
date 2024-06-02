@@ -1,15 +1,19 @@
 import MessageInput from "./MessageInput";
 import Messages from "./Messages";
 import {TiMessages} from "react-icons/ti";
-import useConversation from "../../zustand/useConversation.js";
 import {useEffect} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {setSelectedConversation} from "../../store/conversation/conversation.slice.js";
 
 const MesagesContainer = () => {
-  const {selectedConversation, setSelectedConversation, se} = useConversation()
+  const selectedConversation = useSelector((state) => state.conversation.selectedConversation)
+  const dispatch = useDispatch()
   const noChatSelected = !selectedConversation;
 
   useEffect(() => {
-    return () => setSelectedConversation(null)
+    return () => {
+      dispatch(setSelectedConversation(null))
+    }
   }, [setSelectedConversation]);
 
   return (

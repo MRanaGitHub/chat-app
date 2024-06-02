@@ -1,9 +1,10 @@
 import {useState} from "react";
 import toast from "react-hot-toast";
-import {useAuthContext} from "../../context/AuthContext.jsx";
+import {useDispatch} from "react-redux";
+import {setAuthUser} from "../store/user/user.slice.js";
 
 export const useSignUp = () => {
-  const {setAuthUser} = useAuthContext()
+  const dispatch = useDispatch()
   const [loading, setLoading] = useState(false);
 
   const signUp = async (users, confirmPwd) => {
@@ -28,9 +29,8 @@ export const useSignUp = () => {
           toast.error(data.error)
           return
         }
+        dispatch(setAuthUser(data))
 
-        localStorage.setItem('authUser', JSON.stringify(data))
-        setAuthUser(data)
 
         return data;
       } catch (error) {

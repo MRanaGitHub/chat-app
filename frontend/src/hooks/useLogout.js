@@ -1,11 +1,12 @@
 import toast from "react-hot-toast";
 import {useState} from "react";
-import {useAuthContext} from "../../context/AuthContext.jsx";
+import {useDispatch} from "react-redux";
+import {setAuthUser} from "../store/user/user.slice.js";
 
 
 export const useLogout = () => {
   const [loading, setLoading] = useState(false);
-  const {setAuthUser} = useAuthContext()
+  const dispatch = useDispatch()
 
   const logout = async () => {
     setLoading(true);
@@ -18,9 +19,8 @@ export const useLogout = () => {
       });
       const data = await response.json()
 
-      localStorage.removeItem('authUser')
 
-      setAuthUser(null)
+      dispatch(setAuthUser(null))
 
       if (data?.error) {
         toast.error(data.error)

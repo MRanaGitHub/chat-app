@@ -1,15 +1,29 @@
-import {useState} from "react";
-import {useAuthContext} from "../../context/AuthContext.jsx";
+import {useEffect, useState} from "react";
 import toast from "react-hot-toast";
-import useConversation from "../zustand/useConversation.js";
+import {useDispatch, useSelector} from "react-redux";
+import {setMessages} from "../store/conversation/conversation.slice.js";
 
 export const useSendMessage = () => {
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch()
+  const selectedConversationState = useSelector((state) => state.conversation.selectedConversation)
+  const messagesState = useSelector((state) => state.conversation.messages)
 
-  const {messages, setMessages, selectedConversation} = useConversation()
+  const [loading, setLoading] = useState(false);
+  const [selectedConversation, setSelectedConversation] = useState(null);
+  const [allMessages, setAllMessages] = useState()
+
+
+  useEffect(() => {
+    setSelectedConversation(selectedConversationState)
+  }, [selectedConversationState]);
+
+  useEffect(() => {
+    setAllMessages(messagesState)
+  }, [messagesState]);
 
   const sendMessage = async (message) => {
     setLoading(true);
+    debugger
     try {
       const response = await fetch(`/api/v1/messages/send/${selectedConversation._id}`, {
         method: "POST",
@@ -24,7 +38,8 @@ export const useSendMessage = () => {
         toast.error(data.error)
         return
       }
-      setMessages([...messages, data.data.message])
+
+      dispatch(setMessages(...allMessages, data.data.message))
 
     } catch (error) {
       throw new Error(error);

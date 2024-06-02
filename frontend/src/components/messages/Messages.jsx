@@ -1,6 +1,7 @@
 import Message from "./Message";
 import {useGetMessages} from "../../hooks/useGetMessages.js";
-import {useEffect, useRef} from "react";
+import {useEffect, useRef, useState} from "react";
+import {useSelector} from "react-redux";
 
 const Messages = () => {
   const {loading, messages} = useGetMessages()

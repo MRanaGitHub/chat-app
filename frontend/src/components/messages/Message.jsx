@@ -1,15 +1,13 @@
-import {useContext} from "react";
-import {useAuthContext} from "../../../context/AuthContext.jsx";
-import useConversation from "../../zustand/useConversation.js";
 import {extractTime} from "../../utills/extractTime.js";
+import {useSelector} from "react-redux";
 
-const Message = ({message, lastIndex}) => {
-  const {authUser} = useAuthContext()
-  const loggedInUser = JSON.parse(localStorage.getItem('authUser'))
-  const {selectedConversation} = useConversation()
-  const fromMe = message?.senderId === loggedInUser?._id
+const Message = ({message, lastIndex, loggedInUser}) => {
+  const selectedConversation = useSelector((state) => state.conversation.selectedConversation)
+  const authUser = useSelector((state) => state.authUser.value)
+
+  const fromMe = message?.senderId === authUser?._id
   const chatClass = fromMe ? 'chat-end' : 'chat-start'
-  const profilePhoto = fromMe ? loggedInUser?.avatar : selectedConversation.avatar
+  const profilePhoto = fromMe ? authUser?.avatar : selectedConversation.avatar
   const bubbleBgColor = fromMe ? 'bg-blue-500' : ''
   const formattedDate = extractTime(message.createdAt)
 

@@ -1,26 +1,23 @@
-import useConversation from "../../zustand/useConversation.js";
-import {useSocketContext} from "../../../context/SocketContext.jsx";
+import {useDispatch, useSelector} from "react-redux";
+import {setSelectedConversation} from "../../store/conversation/conversation.slice.js";
 
 const Converstion = ({conversation, emoji, lastIndex}) => {
-
-  const {selectedConversation, setSelectedConversation} = useConversation()
+  const selectedConversation = useSelector((state) => state.conversation.selectedConversation)
+  const dispatch = useDispatch()
 
   const isSelectedConversation = selectedConversation?._id === conversation?._id
 
-  const {onLineUsers} = useSocketContext()
-
-  const isOnline = onLineUsers?.includes(conversation?._id)
 
   return (
     <>
       <div
         className={`flex gap-2 items-center hover:bg-sky-500 rounded p-2 py-1 cursor-pointer ${isSelectedConversation ? 'bg-sky-500' : ''}`}
         onClick={() => {
-          setSelectedConversation(conversation)
+          dispatch(setSelectedConversation(conversation))
         }}
       >
         {/*<div className={`avatar online`}>*/}
-        <div className={`avatar ${isOnline ? 'online' : ''}`}>
+        <div className={`avatar online`}>
           <div className='w-12 rounded-full'>
             <img
               src={conversation.avatar}

@@ -1,10 +1,10 @@
 import {useEffect, useState} from "react";
-import {useAuthContext} from "../../context/AuthContext.jsx";
 import toast from "react-hot-toast";
 
 export const useGetConversation = () => {
   const [loading, setLoading] = useState(false);
   const [conversations, setConversations] = useState([]);
+
 
   useEffect(() => {
     const getConversation = async () => {

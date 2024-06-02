@@ -1,5 +1,4 @@
-import Converstion from "./Converstion"
-import useConversation from "../../zustand/useConversation.js";
+import Conversion from "./Converstion"
 import {useGetConversation} from "../../hooks/useGetConversation.js";
 import {getRandomEmoji} from "../../utills/emojis.js";
 
@@ -13,7 +12,7 @@ const Conversations = () => {
       {
         conversations?.map((conversation, index) => {
           return (
-            <Converstion
+            <Conversion
               key={conversation._id}
               conversation={conversation}
               emoji={getRandomEmoji()}
